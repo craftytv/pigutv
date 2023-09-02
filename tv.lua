@@ -56,7 +56,7 @@ while 1 do
                 local color = p-6
                 mon.setPaletteColor(2^color, colors.packRGB(tbl[1]/255, tbl[2]/255, tbl[3]/255))
             end
-            offset = -size.w+2^bitdepth*6+2+8 --Canvas bytes + Resolution bytes
+            offset = -size.w+2^bitdepth*6+2+8+1 --Canvas bytes + Resolution bytes
         end
 
         local t = {}
