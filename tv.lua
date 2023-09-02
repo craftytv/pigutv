@@ -30,7 +30,7 @@ print("Communication opened on channel " .. chan)
 while 1 do
     local event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
     if (channel==chan) and (type(message) == "table") and (message.type=="TV_SIGNAL") then
-        local status, err = pcall(function()
+        
             local data = message.data
 
             t = {}
@@ -78,7 +78,7 @@ while 1 do
                             end
                         end
                     else
-                        pcall(function()
+                        local status, err = pcall(function()
                             monitor:set_pixel(math.floor(x*((monsizew*2)/size.w)),math.floor(y*((monsizeh*3)/size.h)),c(t[offset+x+y*size.w]))
                         end)
                     end
@@ -86,6 +86,6 @@ while 1 do
             end
 
             monitor:render()
-        end)
+        
     end
 end
