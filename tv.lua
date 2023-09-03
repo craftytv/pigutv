@@ -11,6 +11,23 @@ if err then
     end
 end
 
+local subtitle = ""
+
+local function center(term, text, y)
+    local w,h = term.getSize()
+    term.setCursorPos(w/2-text:len()/2,y)
+    term.write(text)
+end
+
+local function renderSubtitles(term, text, bg, fg)
+    term.setTextColor(fg)
+    term.setBackgroundColor(bg)
+    local w,h = term.getSize()
+    for x=1,math.ceil(text:len()/w) do
+        center(term, text:sub((x-1)*w+1, x*w), h-x)
+    end
+end
+
 local datas = {}
 local mon
 local modem = peripheral.find("modem", function(_, p) return p.isWireless() end) or error("No modem attached", 0)
@@ -21,6 +38,12 @@ if read()=="yes" then
     mon.setTextScale(0.5)
 else
     mon = term
+end
+
+function c(n) if n then return math.floor(2^n) end return 1 end
+
+local function getRGB(x)
+    return colors.packRGB(mon.getPaletteColor(c(x)))
 end
 
 local chan = tonumber(args[1])
@@ -34,6 +57,10 @@ while active do
     local event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
     if (channel==chan) and (type(message) == "table") and (message.type=="TV_SIGNAL") then
         local data = message.data
+
+        if message.subtitles then
+            subtitle = message.subtitles
+        end
 
         local b = {}
         for x=1,data:len() do
@@ -69,8 +96,6 @@ while active do
             end
         end
 
-        function c(n) if n then return math.floor(2^n) end return 1 end
-
         local monitor = pb.new(mon)
         local monsizew, monsizeh = mon.getSize()
 
@@ -95,6 +120,18 @@ while active do
         end
 
         monitor:render()
+
+        local bg = 0
+        local fg = 0
+        for x=0,15 do
+            if getRGB(x)>getRGB(fg) then
+                fg = x
+            elseif getRGB(x)<getRGB(bg) then
+                bg = x
+            end
+        end
+
+        renderSubtitles(mon, subtitle, c(bg), c(fg))
     end
 end
 end, function()
