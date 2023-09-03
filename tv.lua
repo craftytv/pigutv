@@ -15,7 +15,7 @@ local subtitle = ""
 
 local function center(term, text, y)
     local w,h = term.getSize()
-    term.setCursorPos(w/2-text:len()/2,y)
+    term.setCursorPos(w/2-text:len()/2+1,y)
     term.write(text)
 end
 
@@ -24,7 +24,7 @@ local function renderSubtitles(term, text, bg, fg)
     term.setBackgroundColor(bg)
     local w,h = term.getSize()
     for x=1,math.ceil(text:len()/w) do
-        center(term, text:sub((x-1)*w+1, x*w), h-x)
+        center(term, text:sub((x-1)*w+1, x*w), h-math.ceil(text:len()/w)+x)
     end
 end
 
