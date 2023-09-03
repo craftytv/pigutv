@@ -27,6 +27,7 @@ local chan = tonumber(args[1])
 modem.open(chan)
 print("Communication opened on channel " .. chan)
 
+parallel.waitForAny(function()
 while 1 do
     local event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
     if (channel==chan) and (type(message) == "table") and (message.type=="TV_SIGNAL") then
@@ -94,3 +95,6 @@ while 1 do
         monitor:render()
     end
 end
+end, function()
+    os.pullEvent("terminate")
+end)
