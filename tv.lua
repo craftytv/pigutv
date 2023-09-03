@@ -27,8 +27,10 @@ local chan = tonumber(args[1])
 modem.open(chan)
 print("Communication opened on channel " .. chan)
 
-parallel.waitForAny(function()
-while 1 do
+local active = true
+
+parallel.waitForAll(function()
+while active do
     local event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
     if (channel==chan) and (type(message) == "table") and (message.type=="TV_SIGNAL") then
         local data = message.data
@@ -96,5 +98,11 @@ while 1 do
     end
 end
 end, function()
-    os.pullEvent("terminate")
+    local event = os.pullEventRaw("terminate")
+    if event == "terminate" then
+        activate = false
+        for x=0,15 do
+            mon.setPaletteColor(2^x, mon.nativePaletteColor(2^x)) -- Palette mode 1: native terminal colors
+        end
+    end
 end)
