@@ -113,7 +113,11 @@ while active do
                     end
                 else
                     local status, err = pcall(function()
-                        monitor:set_pixel(math.floor(x*((monsizew*2)/size.w)),math.floor(y*((monsizeh*3)/size.h)),c(t[offset+x+y*size.w]))
+                        for h=0,math.ceil(size.w/(monsizew*2))+1 do
+                            for l=0,math.ceil(size.h/(monsizeh*3))+1 do
+                                monitor:set_pixel(math.floor(x*((monsizew*2)/size.w))+h,math.floor(y*((monsizeh*3)/size.h))+l,c(t[offset+x+y*size.w]))
+                            end
+                        end
                     end)
                 end
             end
@@ -134,6 +138,8 @@ while active do
         renderSubtitles(mon, subtitle, c(bg), c(fg))
     end
 end
+os.queueEvent("tv")
+os.pullEvent("tv")
 end, function()
     local event = os.pullEventRaw("terminate")
     if event == "terminate" then
