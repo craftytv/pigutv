@@ -112,13 +112,13 @@ while active do
                         end
                     end
                 else
-                    local status, err = pcall(function()
-                        for h=0,math.ceil(size.w/(monsizew*2))+1 do
-                            for l=0,math.ceil(size.h/(monsizeh*3))+1 do
-                                monitor:set_pixel(math.floor(x*((monsizew*2)/size.w))+h,math.floor(y*((monsizeh*3)/size.h))+l,c(t[offset+x+y*size.w]))
-                            end
+                    for h=0,math.ceil(size.w/(monsizew*2))+1 do
+                        for l=0,math.ceil(size.h/(monsizeh*3))+1 do
+                            local status, err = pcall(function()
+                            monitor:set_pixel(math.floor(x*((monsizew*2)/size.w))+h,math.floor(y*((monsizeh*3)/size.h))+l,c(t[offset+x+y*size.w]))
+                            end)
                         end
-                    end)
+                    end
                 end
             end
         end
